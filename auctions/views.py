@@ -95,22 +95,44 @@ def create_listing(request):
 def listing(request, listing_id):
     listing = models.Listing.objects.get(id=listing_id)
     button_value = "Add to Watchlist"
-    
-    check = models.WatchlistedListing.objects.filter(user=request.user, listing=listing)
+    bids = models.Bid.objects.filter(listing=listing)
     
     if request.method == 'POST':
+        if 'watchlist' in request.POST:
+            if not request.user.is_authenticated:
+                return HttpResponseRedirect(reverse('login_view'))
+            
+            check = models.WatchlistedListing.objects.filter(user=request.user, listing=listing)
+            
+            if check:
+                watchlist = models.WatchlistedListing.objects.get(user=request.user, listing=listing)
+                watchlist.delete()
+                
+                return HttpResponseRedirect(reverse('index'))
+            else:
+                watchlist = models.WatchlistedListing(user=request.user, listing=listing)
+                watchlist.save()
+            
+                return HttpResponseRedirect(reverse('watchlist', args=[request.user.id]))
         
-        watchlist = models.WatchlistedListing(user=request.user, listing=listing)
+        elif 'place_bid' in request.POST:
+            bidded_price = request.POST['bid']
+            
+            bid = models.Bid(listing=listing, bidded_price=bidded_price, bidder=request.user)
+            bid.save()
+            return HttpResponseRedirect(reverse('listing', args=[listing.id]))
+        
+        elif 'close_auction' in request.POST:
+            listing.is_open = False
+            listing.save()
+            
+            return HttpResponseRedirect(reverse('listing', args=[listing.id]))
+    
+    if request.user.is_authenticated:
+        check = models.WatchlistedListing.objects.filter(user=request.user, listing=listing)
         
         if check:
-            watchlist.delete()
-        else:
-            watchlist.save()
-        
-            return HttpResponseRedirect(reverse('watchlist', args=[request.user.id]))
-    
-    if check:
-        button_value = "Remove from Watchlist"
+            button_value = "Remove from Watchlist"
     
     categories = dict(models.CATEGORIES)
     
@@ -118,18 +140,26 @@ def listing(request, listing_id):
         category = "Not Listed"
     else:
         category = categories[listing.category]
+        
+    current_bid = ''
+    current_bidder = ''
+    
+    if bids:
+        current_bid = bids.last()
+        current_bidder = current_bid.bidder.username
     
     return render(request, "auctions/listing.html", {
         'listing': listing,
         'category': category,
-        'button_value': button_value
+        'button_value': button_value,
+        'current_bid': current_bid,
+        'current_bidder': current_bidder
     })
     
 @login_required(login_url='/login')
 def watchlist(request, user_id):
-    
     watchlist = models.WatchlistedListing.objects.filter(user=user_id)
-    
+        
     return render(request, "auctions/watchlist.html", {
         "watchlist": watchlist
     })

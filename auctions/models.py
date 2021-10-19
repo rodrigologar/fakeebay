@@ -31,13 +31,16 @@ class Listing(models.Model):
     is_open = models.BooleanField(default=True)
     
     def __str__(self):
-        return f"{self.id}: {self.title} from user {self.lister.id}"
+        return f"{self.id} {self.title} from user {self.lister.id}"
     
 class Bid(models.Model):
     listing = models.ForeignKey("Listing", on_delete=CASCADE, related_name="bids")
     bidded_price = models.PositiveIntegerField()
     bidder = models.ForeignKey("User", on_delete=CASCADE, related_name="bids")
     date = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return f"Bid for {self.listing.title}({self.listing.id}) made by {self.bidder.id}"
     
 class Comment(models.Model):
     text = models.TextField()

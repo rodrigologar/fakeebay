@@ -13,6 +13,8 @@
             <h2>Price: ${{ listing.listing.price }}</h2>
             <p>Created {{ listing.listing.date }}</p>
         </div>
+        {% empty %}
+            <h3>You have no listings in your Watchlist</h3>
     {% endfor %}
 
 {% endblock %}

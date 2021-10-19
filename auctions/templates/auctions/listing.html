@@ -8,7 +8,44 @@
         <h1>Listing: {{ listing.title }}</h1>
         <img src="{{ listing.image }}" alt="No image available" height="350px">
         <p>{{ listing.description }}</p>
-        <h2>${{ listing.price }}</h2>
+        <h2>Starting Price: ${{ listing.price }}</h2>
+        {% if not listing.is_open %}
+            <h2>Auction Closed</h2>
+            <h2>Winner: {{ current_bidder }}</h2>
+        {% else %}
+            {% if current_bid %}
+                <h2>Current Bid: ${{ current_bid.bidded_price }} made by {{ current_bidder }}</h2>
+                {% if user.is_authenticated %}
+                    {% if user == listing.lister %}
+                        <form action="{% url 'listing' listing.id %}" method="post">
+                            {% csrf_token %}
+                            <input type="submit" name="close_auction" value="Close Auction">
+                        </form>
+                    {% else %}
+                        <form action="{% url 'listing' listing.id %}" method="post">
+                            {% csrf_token %}
+                            <input type="number" name="bid" value="{{ current_bid.bidded_price }}" min="{{ current_bid.bidded_price }}">
+                            <input type="submit" name="place_bid" value="Bid">
+                        </form>
+                    {% endif %}
+                {% endif %}
+            {% else %}
+                <h2>No bids made</h2>
+                {% if user.is_authenticated %}
+                    {% if user == listing.lister %}
+                        <form action="{% url 'listing' listing.id %}" method="post">
+                            <input type="submit" name="close_auction" value="Close Auction">
+                        </form>
+                    {% else %}
+                        <form action="{% url 'listing' listing.id %}" method="post">
+                            {% csrf_token %}
+                            <input type="number" name="bid" value="{{ listing.price }}" min="{{ listing.price }}">
+                            <input type="submit" name="place_bid" value="Bid">
+                        </form>
+                    {% endif %}
+                {% endif %}
+            {% endif %}
+        {% endif %}
         <h3>Details</h3>
         <p>Listed by: {{ listing.lister.username }}</p>
         <p>Category: {{ category }}</p>
@@ -16,7 +53,7 @@
             <div class="watchlist">
                 <form action="{% url 'listing' listing.id %}" method="post">
                     {% csrf_token %}
-                    <input type="submit" value="{{ button_value }}">
+                    <input type="submit" name="watchlist" value="{{ button_value }}">
                 </form>
             </div>
         {% endif %}
