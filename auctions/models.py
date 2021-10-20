@@ -44,14 +44,8 @@ class Bid(models.Model):
     
 class Comment(models.Model):
     text = models.TextField()
-    likes = models.PositiveIntegerField()
+    listing = models.ForeignKey("Listing", on_delete=CASCADE)
     commenter = models.ForeignKey("User", on_delete=CASCADE, related_name="comments")
-
-class Reply(models.Model):
-    text = models.TextField()
-    likes = models.PositiveIntegerField()
-    replier = models.ForeignKey("User", on_delete=CASCADE, related_name="user_replies")
-    comment = ForeignKey("Comment", on_delete=CASCADE, related_name="comment_replies")
     
 class WatchlistedListing(models.Model):
     user = models.ForeignKey("User", on_delete=CASCADE)

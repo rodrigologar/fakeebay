@@ -96,6 +96,7 @@ def listing(request, listing_id):
     listing = models.Listing.objects.get(id=listing_id)
     button_value = "Add to Watchlist"
     bids = models.Bid.objects.filter(listing=listing)
+    comments = models.Comment.objects.filter(listing=listing)
     
     if request.method == 'POST':
         if 'watchlist' in request.POST:
@@ -127,6 +128,14 @@ def listing(request, listing_id):
             listing.save()
             
             return HttpResponseRedirect(reverse('listing', args=[listing.id]))
+        
+        elif 'post_comment' in request.POST:
+            comment_text = request.POST['comment_text']
+            
+            comment = models.Comment(text=comment_text, commenter=request.user, listing=listing)
+            comment.save()
+            
+            return HttpResponseRedirect(reverse('listing', args=[listing.id]))
     
     if request.user.is_authenticated:
         check = models.WatchlistedListing.objects.filter(user=request.user, listing=listing)
@@ -153,7 +162,8 @@ def listing(request, listing_id):
         'category': category,
         'button_value': button_value,
         'current_bid': current_bid,
-        'current_bidder': current_bidder
+        'current_bidder': current_bidder,
+        'comments': comments
     })
     
 @login_required(login_url='/login')
@@ -162,4 +172,18 @@ def watchlist(request, user_id):
         
     return render(request, "auctions/watchlist.html", {
         "watchlist": watchlist
+    })
+    
+def categories(request):
+    categories = models.CATEGORIES
+    
+    return render(request, "auctions/categories.html", {
+        "categories": categories
+    })
+    
+def results(request, category):
+    listings = models.Listing.objects.filter(category=category)
+    
+    return render(request, "auctions/results.html", {
+        "listings": listings
     })
