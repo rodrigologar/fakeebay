@@ -96,8 +96,8 @@ def listing(request, listing_id):
     listing = models.Listing.objects.get(id=listing_id)
     button_value = "Add to Watchlist"
     bids = models.Bid.objects.filter(listing=listing)
-    comments = models.Comment.objects.filter(listing=listing)
-    
+    comments = reversed(models.Comment.objects.filter(listing=listing))
+
     if request.method == 'POST':
         if 'watchlist' in request.POST:
             if not request.user.is_authenticated:

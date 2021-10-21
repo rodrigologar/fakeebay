@@ -14,7 +14,11 @@
             {% if current_bidder == user.username %}
                 <h2>You won this auction!</h2>
             {% else %}
-                <h2>Winner: {{ current_bidder }}</h2>
+                {% if current_bidder %}
+                    <h2>Winner: {{ current_bidder }}</h2>
+                {% else %}
+                    <h2>No bids were made</h2>
+                {% endif %}
             {% endif %}
         {% else %}
             {% if current_bid %}
@@ -38,6 +42,7 @@
                 {% if user.is_authenticated %}
                     {% if user == listing.lister %}
                         <form action="{% url 'listing' listing.id %}" method="post">
+                            {% csrf_token %}
                             <input type="submit" name="close_auction" value="Close Auction">
                         </form>
                     {% else %}
