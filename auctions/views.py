@@ -97,6 +97,7 @@ def listing(request, listing_id):
     button_value = "Add to Watchlist"
     bids = models.Bid.objects.filter(listing=listing)
     comments = reversed(models.Comment.objects.filter(listing=listing))
+    message = ''
 
     if request.method == 'POST':
         if 'watchlist' in request.POST:
@@ -117,10 +118,16 @@ def listing(request, listing_id):
                 return HttpResponseRedirect(reverse('watchlist', args=[request.user.id]))
         
         elif 'place_bid' in request.POST:
-            bidded_price = request.POST['bid']
+            bidded_price = int(request.POST['bid'])
             
-            bid = models.Bid(listing=listing, bidded_price=bidded_price, bidder=request.user)
-            bid.save()
+            last_bid = listing.bids.last().bidded_price
+            
+            if bidded_price <= last_bid:
+                message = 'Bid should be bigger than current highest bid'
+            else:
+                bid = models.Bid(listing=listing, bidded_price=bidded_price, bidder=request.user)
+                bid.save()
+                
             return HttpResponseRedirect(reverse('listing', args=[listing.id]))
         
         elif 'close_auction' in request.POST:
@@ -163,7 +170,8 @@ def listing(request, listing_id):
         'button_value': button_value,
         'current_bid': current_bid,
         'current_bidder': current_bidder,
-        'comments': comments
+        'comments': comments,
+        'message': message
     })
     
 @login_required(login_url='/login')

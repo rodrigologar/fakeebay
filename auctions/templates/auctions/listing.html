@@ -5,8 +5,10 @@
 {% block body %}
 
     <div class="listing_full">
-        <h1>Listing: {{ listing.title }}</h1>
-        <img src="{{ listing.image }}" alt="No image available" height="350px">
+        <h1>{{ listing.title }}</h1>
+        <div class="img">
+            <img src="{{ listing.image }}" alt="No image available">
+        </div>
         <p>{{ listing.description }}</p>
         <h2>Starting Price: ${{ listing.price }}</h2>
         {% if not listing.is_open %}
@@ -27,13 +29,16 @@
                     {% if user == listing.lister %}
                         <form action="{% url 'listing' listing.id %}" method="post">
                             {% csrf_token %}
-                            <input type="submit" name="close_auction" value="Close Auction">
+                            <input class="btn btn-primary" type="submit" name="close_auction" value="Close Auction">
                         </form>
                     {% else %}
+                        {% if message %}
+                            <p>Error: {{ message }}</p>
+                        {% endif %}
                         <form action="{% url 'listing' listing.id %}" method="post">
                             {% csrf_token %}
-                            <input type="number" name="bid" value="{{ current_bid.bidded_price }}" min="{{ current_bid.bidded_price }}">
-                            <input type="submit" name="place_bid" value="Bid">
+                            <input class="form-control" type="number" name="bid" value="{{ current_bid.bidded_price }}" min="{{ current_bid.bidded_price }}">
+                            <input class="btn btn-primary" type="submit" name="place_bid" value="Bid">
                         </form>
                     {% endif %}
                 {% endif %}
@@ -43,33 +48,35 @@
                     {% if user == listing.lister %}
                         <form action="{% url 'listing' listing.id %}" method="post">
                             {% csrf_token %}
-                            <input type="submit" name="close_auction" value="Close Auction">
+                            <input class="btn btn-primary" type="submit" name="close_auction" value="Close Auction">
                         </form>
                     {% else %}
+                        {% if message %}
+                            <p>Error: {{ message }}</p>
+                        {% endif %}
                         <form action="{% url 'listing' listing.id %}" method="post">
                             {% csrf_token %}
-                            <input type="number" name="bid" value="{{ listing.price }}" min="{{ listing.price }}">
-                            <input type="submit" name="place_bid" value="Bid">
+                            <input class="form-control" type="number" name="bid" value="{{ listing.price }}" min="{{ listing.price }}">
+                            <input class="btn btn-primary" type="submit" name="place_bid" value="Bid">
                         </form>
                     {% endif %}
                 {% endif %}
             {% endif %}
         {% endif %}
-        <h3>Details</h3>
         <p>Listed by: {{ listing.lister.username }}</p>
         <p>Category: {{ category }}</p>
         {% if user.is_authenticated %}
             <div class="watchlist">
                 <form action="{% url 'listing' listing.id %}" method="post">
                     {% csrf_token %}
-                    <input type="submit" name="watchlist" value="{{ button_value }}">
+                    <input class="btn btn-primary" type="submit" name="watchlist" value="{{ button_value }}">
                 </form>
             </div>
             <div class="comment_section">
                 <form action="{% url 'listing' listing.id %}" method="post">
                     {% csrf_token %}
                     <textarea name="comment_text" id="comment"></textarea>
-                    <input type="submit" value="Post Comment" name="post_comment">
+                    <input class="btn btn-primary" type="submit" value="Post Comment" name="post_comment">
                 </form>
             </div>
         {% endif %}

@@ -6,5 +6,14 @@ from . import models
 class ListingForm(ModelForm):
     class Meta:
         model = models.Listing
-        fields = ['title', 'description', 'price', 'image', 'category']
-        labels = {'price': 'Starting Price'}
+        fields = [
+            'title', 
+            'description', 
+            'price', 
+            'image', 
+            'category'
+        ]
+        
+        labels = {
+            'price': 'Starting Price'
+        }

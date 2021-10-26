@@ -4,17 +4,33 @@
 
 {% block body %}
 
-    <h2>Results</h2>
+    <div class="results">
 
-    {% for listing in listings %}
+        {% for listing in listings %}
         <div class="listing">
-            <img src="{{ listing.image }}" alt="No image available" height="300px">
-            <a href="{% url 'listing' listing.id %}"><h1>{{ listing.title }}</h1></a>
-            <h2>Price: ${{ listing.price }}</h2>
-            <p>Created {{ listing.date }}</p>
+            <div class="img">
+                {% if listing.image %}
+                    <img src="{{ listing.image }}" alt="{{ listing.title }}">
+                {% else %}
+                    <p>No image available</p>
+                {% endif %}
+            </div>
+            <a href="{% url 'listing' listing.id %}">{{ listing.title }}</a>
+            <div class="description">
+                <p>{{ listing.description }}</p>
+            </div>
+            {% if listing.is_open %}
+                <h2>Current bid: ${{ listing.price }}</h2>
+                <h3>by {{ listing.lister.username }}</h3>
+            {% else %}
+                <h2>Winning bid: ${{ listing.price }}</h2>
+                <h3>by {{ listing.lister.username }}</h3>
+            {% endif %}
+            <h4>Created {{ listing.date }}</h4>
         </div>
-    {% empty %}
-        <h3>No results</h3>
-    {% endfor %}
+        {% empty %}
+            <h1>No results</h1>
+        {% endfor %}
+    </div>
 
 {% endblock %}

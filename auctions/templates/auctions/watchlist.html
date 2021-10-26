@@ -4,17 +4,32 @@
 
 {% block body %}
 
-    <h2>Listings in my Watchlist</h2>
-
-    {% for listing in watchlist %}
+    <div class="watchlist">
+        {% for listing in watchlist %}
         <div class="listing">
-            <img src="{{ listing.listing.image }}" alt="No image available" height="300px">
-            <a href="{% url 'listing' listing.listing.id %}"><h1>{{ listing.listing.title }}</h1></a>
-            <h2>Price: ${{ listing.listing.price }}</h2>
-            <p>Created {{ listing.listing.date }}</p>
+            <div class="img">
+                {% if listing.listing.image %}
+                    <img src="{{ listing.listing.image }}" alt="{{ listing.listing.title }}">
+                {% else %}
+                    <p>No image available</p>
+                {% endif %}
+            </div>
+            <a href="{% url 'listing' listing.listing.id %}">{{ listing.listing.title }}</a>
+            <div class="description">
+                <p>{{ listing.listing.description }}</p>
+            </div>
+            {% if listing.listing.is_open %}
+                <h2>Current bid: ${{ listing.listing.price }}</h2>
+                <h3>by {{ listing.listing.lister.username }}</h3>
+            {% else %}
+                <h2>Winning bid: ${{ listing.listing.price }}</h2>
+                <h3>by {{ listing.listing.lister.username }}</h3>
+            {% endif %}
+            <h4>Created {{ listing.listing.date }}</h4>
         </div>
-        {% empty %}
-            <h3>You have no listings in your Watchlist</h3>
-    {% endfor %}
+            {% empty %}
+                <h1>You have no listings in your Watchlist</h1>
+        {% endfor %}
+    </div>
 
 {% endblock %}

@@ -6,27 +6,38 @@
 
     <div class="listings">
         {% for listing in listings %}
-            <div class="listing">
-                <div class="img">
-                    {% if listing.image %}
-                        <img src="{{ listing.image }}" alt="{{ listing.title }}">
+            {% if listing.is_open %}
+                <div class="listing">
+                    <div class="img">
+                        {% if listing.image %}
+                            <img src="{{ listing.image }}" alt="{{ listing.title }}">
+                        {% else %}
+                            <p>No image available</p>
+                        {% endif %}
+                    </div>
+                    <a href="{% url 'listing' listing.id %}">{{ listing.title }}</a>
+                    <div class="description">
+                        <p>{{ listing.description }}</p>
+                    </div>
+                    {% if listing.is_open %}
+                        {% if listing.bids.last.bidded_price > 0 %}
+                            <h2>Current bid: ${{ listing.bids.last.bidded_price }}</h2>
+                            <h3>by {{ listing.bids.last.bidder.username }}</h3>
+                        {% else %}
+                            <h2>No bids made</h2>
+                            <h3>Price: ${{ listing.price }}</h3>
+                        {% endif %}
                     {% else %}
-                        <p>No image available</p>
+                        {% if listing.bids.last.bidded_price > 0 %}
+                            <h2>Winning bid: ${{ listing.bids.last.bidded_price }}</h2>
+                            <h3>by {{ listing.bids.last.bidder.username }}</h3>
+                        {% else %}
+                            <h2>No bids were made</h2>
+                        {% endif %}
                     {% endif %}
+                    <h4>Created {{ listing.date }}</h4>
                 </div>
-                <a href="{% url 'listing' listing.id %}">{{ listing.title }}</a>
-                <div class="description">
-                    <p>{{ listing.description }}</p>
-                </div>
-                {% if listing.is_open %}
-                    <h2>Current bid: ${{ listing.price }}</h2>
-                    <h3>by {{ listing.lister.username }}</h3>
-                {% else %}
-                    <h2>Winning bid: ${{ listing.price }}</h2>
-                    <h3>by {{ listing.lister.username }}</h3>
-                {% endif %}
-                <h4>Created {{ listing.date }}</h4>
-            </div>
+            {% endif %}
         {% endfor %}
     </div>
 

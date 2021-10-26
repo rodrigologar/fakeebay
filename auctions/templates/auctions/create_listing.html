@@ -4,13 +4,17 @@
 
 {% block body %}
 
-    <form action="{% url 'create_listing' %}" method="POST">
-        {% csrf_token %}
-        {% if message %}
-            {{ message }}
-        {% endif %}
-        {{ form }}
-        <input type="submit" value="Create Listing">
-    </form>
+    <div class="login">
+        <div class="create_listing">
+            <form action="{% url 'create_listing' %}" method="POST">
+                {% csrf_token %}
+                {% if message %}
+                    {{ message }}
+                {% endif %}
+                {{ form }}
+                <input class="btn btn-primary" type="submit" value="Create Listing">
+            </form>
+        </div>
+    </div>  
 
 {% endblock %}
