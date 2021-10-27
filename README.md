@@ -1,5 +1,5 @@
 # Fakeebay
-[Visit full site](fakeebay.heroku.com)
+[Visit full site](http://fakeebay.heroku.com)
 
 Login info:
 - Username: github_visitor
