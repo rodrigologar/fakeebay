@@ -1,4 +1,9 @@
 # Fakeebay
+[Visit full site](fakeebay.heroku.com)
+
+Login info:
+- Username: github_visitor
+- Password: GitHub2021&
 ## Technologies used:
 - Python (Django)
 - SQLite
