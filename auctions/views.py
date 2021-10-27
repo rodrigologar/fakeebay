@@ -10,7 +10,7 @@ from . import models
 
 def index(request):
     
-    listings = models.Listing.objects.all()
+    listings = reversed(models.Listing.objects.filter(is_open=True))
     
     return render(request, "auctions/index.html", {
         "listings": listings
@@ -97,7 +97,6 @@ def listing(request, listing_id):
     button_value = "Add to Watchlist"
     bids = models.Bid.objects.filter(listing=listing)
     comments = reversed(models.Comment.objects.filter(listing=listing))
-    message = ''
 
     if request.method == 'POST':
         if 'watchlist' in request.POST:
@@ -120,13 +119,8 @@ def listing(request, listing_id):
         elif 'place_bid' in request.POST:
             bidded_price = int(request.POST['bid'])
             
-            last_bid = listing.bids.last().bidded_price
-            
-            if bidded_price <= last_bid:
-                message = 'Bid should be bigger than current highest bid'
-            else:
-                bid = models.Bid(listing=listing, bidded_price=bidded_price, bidder=request.user)
-                bid.save()
+            bid = models.Bid(listing=listing, bidded_price=bidded_price, bidder=request.user)
+            bid.save()
                 
             return HttpResponseRedirect(reverse('listing', args=[listing.id]))
         
@@ -159,10 +153,13 @@ def listing(request, listing_id):
         
     current_bid = ''
     current_bidder = ''
+    next_bid = ''
     
     if bids:
         current_bid = bids.last()
         current_bidder = current_bid.bidder.username
+        next_bid = current_bid.bidded_price + 50
+        
     
     return render(request, "auctions/listing.html", {
         'listing': listing,
@@ -170,13 +167,13 @@ def listing(request, listing_id):
         'button_value': button_value,
         'current_bid': current_bid,
         'current_bidder': current_bidder,
-        'comments': comments,
-        'message': message
+        'next_bid': next_bid,
+        'comments': comments
     })
     
 @login_required(login_url='/login')
 def watchlist(request, user_id):
-    watchlist = models.WatchlistedListing.objects.filter(user=user_id)
+    watchlist = reversed(models.WatchlistedListing.objects.filter(user=user_id))
         
     return render(request, "auctions/watchlist.html", {
         "watchlist": watchlist
@@ -190,7 +187,7 @@ def categories(request):
     })
     
 def results(request, category):
-    listings = models.Listing.objects.filter(category=category)
+    listings = reversed(models.Listing.objects.filter(category=category))
     
     return render(request, "auctions/results.html", {
         "listings": listings

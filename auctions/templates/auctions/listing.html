@@ -32,12 +32,9 @@
                             <input class="btn btn-primary" type="submit" name="close_auction" value="Close Auction">
                         </form>
                     {% else %}
-                        {% if message %}
-                            <p>Error: {{ message }}</p>
-                        {% endif %}
                         <form action="{% url 'listing' listing.id %}" method="post">
                             {% csrf_token %}
-                            <input class="form-control" type="number" name="bid" value="{{ current_bid.bidded_price }}" min="{{ current_bid.bidded_price }}">
+                            <input class="form-control" type="number" name="bid" value="{{ next_bid }}" min="{{ next_bid }}" step="50">
                             <input class="btn btn-primary" type="submit" name="place_bid" value="Bid">
                         </form>
                     {% endif %}
@@ -51,12 +48,9 @@
                             <input class="btn btn-primary" type="submit" name="close_auction" value="Close Auction">
                         </form>
                     {% else %}
-                        {% if message %}
-                            <p>Error: {{ message }}</p>
-                        {% endif %}
                         <form action="{% url 'listing' listing.id %}" method="post">
                             {% csrf_token %}
-                            <input class="form-control" type="number" name="bid" value="{{ listing.price }}" min="{{ listing.price }}">
+                            <input class="form-control" type="number" name="bid" value="{{ listing.price }}" min="{{ listing.price }}" step="50">
                             <input class="btn btn-primary" type="submit" name="place_bid" value="Bid">
                         </form>
                     {% endif %}

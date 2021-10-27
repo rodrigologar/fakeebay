@@ -68,6 +68,12 @@ body {
     justify-content: center;
 }
 
+.listings h2 {
+    color: #fa756b;
+    font-size: 50px;
+    font-weight: 700;
+}
+
 .listing {
     width: 500px;
     border-radius: 1em;
@@ -132,34 +138,6 @@ body {
 }
 
 /* ^ CATEGORIES ^ */
-
-.watchlist {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-}
-
-.watchlist h1 {
-    color: white;
-    font-weight: 700;
-    font-size: 50px;
-}
-
-/* ^ WATCHLIST ^ */
-
-.results {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-}
-
-.results h1 {
-    color: white;
-    font-weight: 700;
-    font-size: 50px;
-}
-
-/* ^ RESULTS ^ */
 
 .login {
     display: flex;

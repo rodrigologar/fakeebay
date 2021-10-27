@@ -4,7 +4,7 @@
 
 {% block body %}
 
-    <div class="watchlist">
+    <div class="listings">
         {% for listing in watchlist %}
         <div class="listing">
             <div class="img">
@@ -19,13 +19,23 @@
                 <p>{{ listing.listing.description }}</p>
             </div>
             {% if listing.listing.is_open %}
-                <h2>Current bid: ${{ listing.listing.price }}</h2>
-                <h3>by {{ listing.listing.lister.username }}</h3>
+                {% if listing.listing.bids.first %}
+                    <h2>Current bid: ${{ listing.listing.bids.last.bidded_price }}</h2>
+                    <h3>by {{ listing.listing.bids.last.bidder }}</h3>
+                {% else %}
+                    <h2>No bids made</h2>
+                    <h3>Price: ${{ listing.listing.price }}</h3>
+                    <h4>Created {{ listing.listing.date }}</h4>
+                {% endif %}
             {% else %}
-                <h2>Winning bid: ${{ listing.listing.price }}</h2>
-                <h3>by {{ listing.listing.lister.username }}</h3>
+                {% if listing.listing.bids.first %}
+                    <h2>Winning bid: ${{ listing.listing.bids.last.bidded_price }}</h2>
+                    <h3>by {{ listing.listing.bids.last.bidder.username }}</h3>
+                {% else %}
+                    <h2>Auction Closed</h2>
+                    <h3>No bids were made</h3>
+                {% endif %}
             {% endif %}
-            <h4>Created {{ listing.listing.date }}</h4>
         </div>
             {% empty %}
                 <h1>You have no listings in your Watchlist</h1>

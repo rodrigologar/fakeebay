@@ -4,8 +4,7 @@
 
 {% block body %}
 
-    <div class="results">
-
+    <div class="listings">
         {% for listing in listings %}
         <div class="listing">
             <div class="img">
@@ -20,13 +19,23 @@
                 <p>{{ listing.description }}</p>
             </div>
             {% if listing.is_open %}
-                <h2>Current bid: ${{ listing.price }}</h2>
-                <h3>by {{ listing.lister.username }}</h3>
+                {% if listing.bids.first %}
+                    <h2>Current bid: ${{ listing.bids.last.bidded_price }}</h2>
+                    <h3>by {{ listing.bids.last.bidder }}</h3>
+                {% else %}
+                    <h2>No bids made</h2>
+                    <h3>Price: ${{ listing.price }}</h3>
+                    <h4>Created {{ listing.date }}</h4>
+                {% endif %}
             {% else %}
-                <h2>Winning bid: ${{ listing.price }}</h2>
-                <h3>by {{ listing.lister.username }}</h3>
+                {% if listing.bids.first %}
+                <h2>Winning bid: ${{ listing.bids.last.bidded_price }}</h2>
+                <h3>by {{ listing.bids.last.bidder.username }}</h3>
+                {% else %}
+                <h2>Auction Closed</h2>
+                <h3>No bids were made</h3>
+                {% endif %}
             {% endif %}
-            <h4>Created {{ listing.date }}</h4>
         </div>
         {% empty %}
             <h1>No results</h1>

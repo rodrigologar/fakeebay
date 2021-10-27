@@ -4,6 +4,9 @@
 
     <div class="login">
         <div class="form">
+            {% if message %}
+                <p>{{ message }}</p>
+            {% endif %}
             <form action="{% url 'register' %}" method="post">
                 {% csrf_token %}
                 <div class="input">
